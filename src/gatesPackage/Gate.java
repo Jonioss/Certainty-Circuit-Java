@@ -11,7 +11,7 @@ public class Gate {
 	}
 	public Gate (int inA, int inB) throws invalidValueException{
 		try {
-			if((inA != 1 && inA != 0) || (inB != 1 && inB != 0)) { throw new invalidValueException(); }
+			if(!isValidValue(inA) || !isValidValue(inB)) { throw new invalidValueException(); }
 			inputA = inA;
 			inputB = inB;
 		} catch (invalidValueException e){
@@ -36,7 +36,10 @@ public class Gate {
 	}
 	
 	// Changes the inputs to the Gate
-	public void changeInputs(int newA, int newB) {
+	public void changeInputs(int newA, int newB) throws invalidValueException {
+		if(!isValidValue(newA) || !isValidValue(newB)) {
+			throw new invalidValueException();
+		}
 		inputA = newA;
 		inputB = newB;
 	}
@@ -46,7 +49,7 @@ public class Gate {
 	}
 	
 	// Prints the truth table of the Gate
-	public void printTruthTable() {
+	public void printTruthTable() throws invalidValueException {
 		System.out.println("A\tB\tOutput");
 		int tempA = inputA; int tempB = inputB;
 		changeInputs(0, 0);
@@ -58,5 +61,11 @@ public class Gate {
 		changeInputs(1, 1);
 		System.out.println(inputA + "\t" + inputB + "\t" + getOutput());
 		inputA = tempA; inputB = tempB;
+	}
+	
+	public static boolean isValidValue(int input) {
+		if(input == 0 || input == 1)
+			return true;
+		return false;
 	}
 }

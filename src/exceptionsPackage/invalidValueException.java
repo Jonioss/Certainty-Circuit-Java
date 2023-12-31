@@ -6,4 +6,7 @@ public class invalidValueException extends Exception{
 	public invalidValueException() {
 		super("Invalid value");
 	}
+	public invalidValueException(String msg) {
+		super(msg);
+	}
 }

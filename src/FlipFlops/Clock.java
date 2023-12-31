@@ -12,7 +12,7 @@ public class Clock {
 		out = 1; // Starts positive
 	}
 	
-	public float getOutput(int currentTime) {
+	public int getOutput(int currentTime) {
 		out = ((currentTime / period) % 2 == 0) ? 1 : 0;
 		return out;
 	}
