@@ -63,9 +63,12 @@ public class Gate {
 		inputA = tempA; inputB = tempB;
 	}
 	
+	
+	// Checks if the given integer has a valid boolean value (0 or 1)
 	public static boolean isValidValue(int input) {
 		if(input == 0 || input == 1)
 			return true;
 		return false;
 	}
+	
 }
