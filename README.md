@@ -13,7 +13,7 @@ Necessary code to implement logic gates and logic circuits in Java.
 * JDK Version: 21
 
 ## Usage
-### Basic Gate Usage
+### Logic Gate Usage
 To create a logic gate, type the code:
 ```
 Gate G1 = new AND(0, 1);
@@ -43,6 +43,12 @@ G3.changeInputs(G1, G2); // If you want to use Gates
 To print the truth table of a gate to the console, use:
 ```
 G1.printTruthTable();
+```
+### IC Usage
+To create an integrated circuit (IC), run the command:
+```
+MUX21 mux21 = new MUX21(input0, input1, select); // If you want integer inputs
+MUX21 mux21 = new MUX21(G0, G1, select) // If you Gate inputs
 ```
 
 ## Future
