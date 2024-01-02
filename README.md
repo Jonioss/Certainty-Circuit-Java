@@ -47,9 +47,9 @@ G1.printTruthTable();
 ### IC Usage
 
 Current ICs available include:
-*[MUX21](#mux21)
-*[MUX41](#mux41)
-*[Encoder42](#encoder42)
+* [MUX21](#mux21)
+* [MUX41](#mux41)
+* [Encoder42](#encoder42)
 
 #### MUX21
 To create a 2-to-1 Multiplexer run the command:
