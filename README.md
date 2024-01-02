@@ -50,6 +50,8 @@ To create an integrated circuit (IC), run the command:
 MUX21 mux21 = new MUX21(input0, input1, select); // If you want integer inputs
 MUX21 mux21 = new MUX21(G0, G1, select) // If you Gate inputs
 ```
+Current ICs available include:
+
 
 ## Future
 - Future updates with sequential circuits coming soon
