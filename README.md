@@ -45,13 +45,30 @@ To print the truth table of a gate to the console, use:
 G1.printTruthTable();
 ```
 ### IC Usage
-To create an integrated circuit (IC), run the command:
+
+Current ICs available include:
+*[MUX21](#mux21)
+*[MUX41](#mux41)
+*[Encoder42](#encoder42)
+
+#### MUX21
+To create a 2-to-1 Multiplexer run the command:
 ```
 MUX21 mux21 = new MUX21(input0, input1, select); // If you want integer inputs
-MUX21 mux21 = new MUX21(G0, G1, select) // If you Gate inputs
+MUX21 mux21 = new MUX21(G0, G1, select) // If you want Gate inputs and select as integer
 ```
-Current ICs available include:
-
+#### MUX41
+To create a 4-to-1 Multiplexer run the command:
+```
+MUX41 mux41 = new MUX41(input0, input1, input2, input3, select0, select1); // If you want integer inputs
+MUX41 mux41 = new MUX41(G0, G1, G2, G3, select0, select1) // If you want Gate inputs with select0 and select1 as integers
+```
+#### Encoder42
+To Create a 4-to-2 Encoder run the command:
+```
+Encoder42 ENC = new Encoder42(in0, in1, in2, in3); // If you want integer inputs
+Encoder42 ENC = new Encoder42(G1, G2, G3, G4); // If you want Gate inputs
+```
 
 ## Future
 - Future updates with sequential circuits coming soon
