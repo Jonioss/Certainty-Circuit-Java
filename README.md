@@ -75,7 +75,7 @@ Gate G1 = new AND(0, 1); // Create the gate
 Wave w = new Wave(G1); // Create the wave
 w.showWave(); // Show the wave
 ```
-You can also have the any input to the wave's gate be a clock:
+You can also have any input to the wave's gate be a clock:
 ```
 Clock clk = new Clock(50); // 50 is the period in picoseconds
 Gate G1 = new AND(clk, 1); // We choose the first input to be a clock and the second to be HIGH for this example
