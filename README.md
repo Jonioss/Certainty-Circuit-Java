@@ -95,6 +95,5 @@ before using w.showWave().
 - More integrated circuits coming soon
 - Expansion upon waveforms:
     1) Ability to test an entire circuit rather than just one gate
-    2) Ability to test the output of an IC
 
 
