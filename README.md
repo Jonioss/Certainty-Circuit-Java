@@ -88,6 +88,7 @@ w.setWaveColors(Color inputsColor, Color outputColor) // Default is Color.BLUE a
 w.setDimensions(int halfPeriod, int height) // Default s 50 and 50 respectively
 w.setName(String newName) // Default is "Wave"
 ```
+before using w.showWave().
 
 ## Future
 - Future updates with sequential circuits coming soon
