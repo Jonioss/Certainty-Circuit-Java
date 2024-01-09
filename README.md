@@ -88,7 +88,7 @@ w.showWave(); // Show the wave
 
 ## Future
 - Future updates with sequential circuits coming soon
-- MUX81, Encoder83 and more integrated circuits coming soon
+- More integrated circuits coming soon
 - Expansion upon waveforms:
     1) Ability to test an entire circuit rather than just one gate
     2) Ability to test the output of an IC
