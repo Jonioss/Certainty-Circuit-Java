@@ -5,22 +5,18 @@ public class OR extends Gate{
 	public OR() throws invalidValueException{
 		this(0, 0);
 	}
-	public OR(int inA, int inB) throws invalidValueException{
-		try {
-			if((inA != 1 && inA != 0) || (inB != 1 && inB != 0)) { throw new invalidValueException(); }
-			inputA = inA;
-			inputB = inB;
-		} catch (invalidValueException e){
-			System.out.println(e);
-			System.exit(1);
-		}
-	}
-	public OR(Gate G1, Gate G2) {
-		super(G1, G2);
+	public OR(Object...obj) throws invalidValueException{
+		super(obj);
 	}
 	@Override
-	public int getOutput() {
-		output = (inputA + inputB > 0) ? 1 : 0;
+	public int getOutput() throws invalidValueException {
+		int[] inps = inputsToInts();
+		output = 0;
+		for(Integer o: inps){
+			if(o == 1) {
+				output = 1;
+			}
+		}
 		return output;
 	}
 }

@@ -78,10 +78,10 @@ public class Encoder42 {
 			throw new invalidValueException("Invalid Input values in Encoder42 (" + this.toString() + ")");
 		}
 	}
-	public void changeInputs(Gate G0, Gate G1, Gate G2, Gate G3) {
+	/*public void setInputs(Gate G0, Gate G1, Gate G2, Gate G3) {
 		this.in0 = G0.getOutput();
 		this.in1 = G1.getOutput();
 		this.in2 = G2.getOutput();
 		this.in3 = G3.getOutput();
-	}
+	}*/
 }

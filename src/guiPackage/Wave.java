@@ -2,6 +2,7 @@ package guiPackage;
 
 import java.awt.Color;
 import javax.swing.JFrame;
+
 import gatesPackage.Gate;
 
 public class Wave extends JFrame{
@@ -16,6 +17,8 @@ public class Wave extends JFrame{
 	public Wave(int width, int height, Gate G) {
 		
 		wp.setGate(G);
+		wp.setInputs(G.getInputs());
+		
 		this.add(wp);
 		
 		this.setTitle("Wave");
@@ -23,7 +26,6 @@ public class Wave extends JFrame{
 		this.setSize(width, height);
 		this.setLocationRelativeTo(null);
 		this.setFocusable(true);
-		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setResizable(false);
 		this.setBackground(Color.BLACK);
 	}
@@ -31,10 +33,10 @@ public class Wave extends JFrame{
 	public void setWaveColors(Color inColor, Color outColor) {
 		wp.setColors(inColor, outColor);
 	}
-	public void setInputs(int[] inputs) {
+	public void setInputs(Object[] inputs) {
 		wp.setInputs(inputs);
 	}
-	public void setDimensions(int pady, int time) {
+	public void setDimensions(int time, int pady) {
 		wp.setGrid(pady, time);
 	}
 	public void setName(String newName) {

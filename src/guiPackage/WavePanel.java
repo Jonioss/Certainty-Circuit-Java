@@ -5,6 +5,7 @@ import java.awt.Graphics;
 
 import javax.swing.*;
 
+import FlipFlops.Clock;
 import exceptionsPackage.invalidValueException;
 import gatesPackage.Gate;
 
@@ -13,8 +14,10 @@ public class WavePanel extends JPanel{
 	private static final long serialVersionUID = 1047256441641923933L;
 	
 	Gate G;
-	int[] inputs = {0, 1};
+	Object[] inputs = {0, 1};
 	int inputsStop = 0; // Y position at which the inputs stop
+	
+	int time = 0;
 	
 	Color inputColor = Color.BLUE;
 	Color outputColor = Color.GREEN;
@@ -26,7 +29,7 @@ public class WavePanel extends JPanel{
 		G = newG;
 	}
 	
-	protected void setInputs(int[] newInputs) {
+	protected void setInputs(Object[] newInputs) {
 		inputs = newInputs;
 	}
 	
@@ -40,15 +43,21 @@ public class WavePanel extends JPanel{
 		period = newPeriod;
 	}
 	
-	public void paintComponent(Graphics g) {
+	public void paintComponent(Graphics g){
 		
 		paintGrid(g);
-		paintInputs(g);
-		paintGateOutput(g);
+		try {
+			paintInputs(g);
+			paintGateOutput(g);
+		} catch (invalidValueException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	}
 	
 	private void paintGrid(Graphics g) {
+		
 		g.setColor(Color.gray);
 		
 		for(int i = 0; i < getHeight(); i = i + pady) {
@@ -60,12 +69,14 @@ public class WavePanel extends JPanel{
 		}
 	}
 	
-	private void paintInputs(Graphics g) {
+	private void paintInputs(Graphics g) throws invalidValueException {
+		
 		g.setColor(inputColor);
 		
 		int middle, high, low=0, prev, current;
 		
 		for(int i = 0; i < inputs.length; i++) {
+			
 			middle = (3*i + 2) * pady;
 			high = middle - pady;
 			low = middle + pady;
@@ -74,11 +85,30 @@ public class WavePanel extends JPanel{
 			current = middle;
 			
 			for(int j = 0; j < getWidth(); j = j + period) {
-				if(inputs[i] == 0) {
-					current = low;
+				
+				if(inputs[i] instanceof Integer) {
+					if((int)inputs[i] == 0) {
+						current = low;
+					}
+					else {
+						current = high;
+					}
 				}
-				else {
-					current = high;
+				else if(inputs[i] instanceof Clock) {
+					if(((Clock)inputs[i]).getOutput(time) == 0) {
+						current = low;
+					}
+					else {
+						current = high;
+					}	
+				}
+				else if(inputs[i] instanceof Gate) {
+					if(((Gate)inputs[i]).getOutput() == 0) {
+						current = low;
+					}
+					else {
+						current = high;
+					}
 				}
 				
 				if(current != prev) {
@@ -86,12 +116,14 @@ public class WavePanel extends JPanel{
 				}
 				g.drawLine(j, current, j+period, current);
 				prev = current;
+				time += period;
 			}
 		}
 		inputsStop = low + 2*pady;
+		time = 0;
 	}
 	
-	private void paintGateOutput(Graphics g) {
+	private void paintGateOutput(Graphics g) throws invalidValueException {
 		int middle = inputsStop;
 		int high = middle - pady;
 		int low = middle + pady;
@@ -99,13 +131,10 @@ public class WavePanel extends JPanel{
 		int prev = middle;
 		int current = middle;
 		
+		time = 0;
 		for(int i = 0; i < getWidth(); i = i + period) {
-			// Check for new inputs
-			try {
-				G.changeInputs(inputs[0], inputs[1]);
-			} catch (invalidValueException e) {
-				e.printStackTrace();
-			}
+			
+			G.setTime(time);
 			
 			// Set color for the wave
 			g.setColor(outputColor);
@@ -129,7 +158,9 @@ public class WavePanel extends JPanel{
 			// Finally, draw the line
 			g.drawLine(i, current, i+period, current);
 			prev = current;
+			time += period;
 		}
+		time = 0;
 	}
 	
 }
