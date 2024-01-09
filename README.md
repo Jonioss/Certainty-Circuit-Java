@@ -7,7 +7,7 @@
 * [Future](#future)
 
 ## Introduction
-Circuit Simulation Software currently in development
+Circuit Simulation Software and IDE currently in development
 
 ## Technologies
 * JDK Version: 21
