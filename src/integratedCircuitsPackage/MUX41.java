@@ -3,56 +3,39 @@ package integratedCircuitsPackage;
 import exceptionsPackage.invalidValueException;
 import gatesPackage.Gate;
 
-public class MUX41 {
-	// Inputs, Select-Input and Output
-	private int in0, in1, in2, in3;
-	private int sel0, sel1;
+public class MUX41 extends Gate{
+	
 	private int output;
 	
 	// Constructors for the 4-1 Multiplexer
-	public MUX41() throws invalidValueException {
+	public MUX41() throws Exception {
 		this(0, 0, 0, 0, 0, 0);
 	}
-	public MUX41(int inpA, int inpB, int inpC, int inpD, int select0, int select1) throws invalidValueException{
-		if(!Gate.isValidValue(inpA) || !Gate.isValidValue(inpB) || !Gate.isValidValue(inpC) || !Gate.isValidValue(inpD) ||
-				!Gate.isValidValue(select0) || !Gate.isValidValue(select1)) {
-			throw new invalidValueException("Invalid Input/Select values in MUX41 (" + this.toString() + ")");
+	public MUX41(Object...obj) throws Exception{
+		super(obj);
+		if(obj.length != 6) {
+			throw new invalidValueException();
 		}
-		else {
-			this.in0 = inpA;
-			this.in1 = inpB;
-			this.in2 = inpC;
-			this.in3 = inpD;
-			this.sel0 = select0;
-			this.sel1 = select1;
-		}
-	}
-	public MUX41(Gate G1, Gate G2, Gate G3, Gate G4, int select0, int select1) throws invalidValueException {
-		if(!Gate.isValidValue(select0) || !Gate.isValidValue(select1)) {
-			throw new invalidValueException("Invalid Input/Select values in MUX41 (" + this.toString() + ")");
-		}
-		this.in0 = G1.getOutput();
-		this.in1 = G2.getOutput();
-		this.in2 = G3.getOutput();
-		this.in3 = G4.getOutput();
-		this.sel0 = select0;
-		this.sel1 = select1;
 	}
 	
 	// Will return the output of the 4-1 Multiplexer
+	@Override
 	public int getOutput() throws invalidValueException{
+		
+		int[] inps = inputsToInts();
+		
 		output = 0;
-		if(this.sel1 == 0 && this.sel0 == 0) {
-			output = this.in0;
+		if(inps[5] == 0 && inps[4] == 0) {
+			output = inps[0];
 		}
-		else if(this.sel1 == 0 && this.sel0 == 1) {
-			output = this.in1;
+		else if(inps[5] == 0 && inps[4] == 1) {
+			output = inps[1];
 		}
-		else if(this.sel1 == 1 && this.sel0 == 0) {
-			output = this.in2;
+		else if(inps[5] == 1 && inps[4] == 0) {
+			output = inps[2];
 		}
-		else if(this.sel1 == 1 && this.sel0 == 1) {
-			output = this.in3;
+		else if(inps[5] == 1 && inps[4] == 1) {
+			output = inps[3];
 		}
 		else {
 			throw new invalidValueException("Invalid value encountered in MUX41's (" + this.toString() + ") getOutput() method.");
@@ -60,32 +43,8 @@ public class MUX41 {
 		return output;
 	}
 	
-	// Changes the inputs to the MUX
-	public void changeInputs(int inpA, int inpB, int inpC, int inpD, int select0, int select1) throws invalidValueException {
-		if(!Gate.isValidValue(inpA) || !Gate.isValidValue(inpB) || !Gate.isValidValue(inpC) || !Gate.isValidValue(inpD) ||
-				!Gate.isValidValue(select0) || !Gate.isValidValue(select1)) {
-			throw new invalidValueException("Invalid Input/Select values in MUX41 (" + this.toString() + ")");
-		}
-		this.in0 = inpA;
-		this.in1 = inpB;
-		this.in2 = inpC;
-		this.in3 = inpD;
-		this.sel0 = select0;
-		this.sel1 = select1;
-	}
-	public void changeInputs(Gate G1, Gate G2, Gate G3, Gate G4, int select0, int select1) throws invalidValueException {
-		if(!Gate.isValidValue(select0) || !Gate.isValidValue(select1)) {
-			throw new invalidValueException("Invalid Input/Select values in MUX41 (" + this.toString() + ")");
-		}
-		this.in0 = G1.getOutput();
-		this.in1 = G2.getOutput();
-		this.in2 = G3.getOutput();
-		this.in3 = G4.getOutput();
-		this.sel0 = select0;
-		this.sel1 = select1;
-	}
-	
 	// Will print the MUX 4-1 truth table
+	@Override
 	public void printTruthTable() {
 		System.out.println("sel1\tsel0\toutput");
 		System.out.println("0\t0\tInput 0");

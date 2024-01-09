@@ -33,9 +33,6 @@ public class Wave extends JFrame{
 	public void setWaveColors(Color inColor, Color outColor) {
 		wp.setColors(inColor, outColor);
 	}
-	public void setInputs(Object[] inputs) {
-		wp.setInputs(inputs);
-	}
 	public void setDimensions(int time, int pady) {
 		wp.setGrid(pady, time);
 	}

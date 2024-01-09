@@ -91,6 +91,7 @@ public class GUI extends JFrame{
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				console.setText("");
 				guiManager.run(txtArea.getText(), console);
 			}
 		});

@@ -1,46 +1,34 @@
 package integratedCircuitsPackage;
 
+import exceptionsPackage.invalidNumberOfInputs;
 import exceptionsPackage.invalidValueException;
 import gatesPackage.Gate;
 
-public final class MUX21{
+public final class MUX21 extends Gate{
 	
-	// Inputs, Select-Input and Output
-	private int in0, in1;
-	private int sel;
 	private int output;
 	
 	// Constructors for the 2-1 Multiplexer
-	public MUX21() throws invalidValueException {
+	public MUX21() throws Exception {
 		this(0, 0, 0);
 	}
-	public MUX21(int inpA, int inpB, int select) throws invalidValueException{
-		if(!Gate.isValidValue(inpA) || !Gate.isValidValue(inpB) || !Gate.isValidValue(select)) {
-			throw new invalidValueException("Invalid Input values in MUX21 (" + this.toString() + ")");
+	public MUX21(Object...obj) throws Exception{
+		super(obj);
+		if(obj.length != 3) {
+			throw new invalidNumberOfInputs();
 		}
-		else {
-			this.in0 = inpA;
-			this.in1 = inpB;
-			this.sel = select;
-		}
-	}
-	public MUX21(Gate G1, Gate G2, int select) throws invalidValueException {
-		if(!Gate.isValidValue(select)) {
-			throw new invalidValueException();
-		}
-		this.in0 = G1.getOutput();
-		this.in1 = G2.getOutput();
-		this.sel = select;
 	}
 	
 	// Will return the output of the 2-1 Multiplexer
+	@Override
 	public int getOutput() throws invalidValueException{
+		int[] inps = inputsToInts();
 		output = 0;
-		if(this.sel == 0) {
-			output = this.in0;
+		if(inps[2] == 0) {
+			output = inps[0];
 		}
-		else if(this.sel == 1) {
-			output = this.in1;
+		else if(inps[2] == 1) {
+			output = inps[1];
 		}
 		else {
 			throw new invalidValueException("Invalid value encountered in MUX21's (" + this.toString() + ") getOutput() method.");
@@ -48,25 +36,8 @@ public final class MUX21{
 		return output;
 	}
 	
-	// Changes the inputs to the MUX
-	public void changeInputs(int new0, int new1, int newSel) throws invalidValueException {
-		if(!Gate.isValidValue(new0) || !Gate.isValidValue(new1) || !Gate.isValidValue(newSel)) {
-			throw new invalidValueException();
-		}
-		in0 = new0;
-		in1 = new1;
-		sel = newSel;
-	}
-	public void changeInputs(Gate newG0, Gate newG1, int newSel) throws invalidValueException {
-		if(!Gate.isValidValue(newSel)) {
-			throw new invalidValueException();
-		}
-		in0 = newG0.getOutput();
-		in1 = newG1.getOutput();
-		sel = newSel;
-	}
-	
 	// Will print the MUX 2-1 truth table
+	@Override
 	public void printTruthTable() {
 		System.out.println("sel\toutput");
 		System.out.println("0\tInput 0");
