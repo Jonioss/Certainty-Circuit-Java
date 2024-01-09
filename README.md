@@ -56,20 +56,17 @@ Current ICs available include:
 #### MUX21
 To create a 2-to-1 Multiplexer run the command:
 ```
-MUX21 mux21 = new MUX21(input0, input1, select); // If you want integer inputs
-MUX21 mux21 = new MUX21(G0, G1, select) // If you want Gate inputs and select as integer
+MUX21 mux21 = new MUX21(input0, input1, select); // Inputs can be integers, gates or clocks
 ```
 #### MUX41
 To create a 4-to-1 Multiplexer run the command:
 ```
-MUX41 mux41 = new MUX41(input0, input1, input2, input3, select0, select1); // If you want integer inputs
-MUX41 mux41 = new MUX41(G0, G1, G2, G3, select0, select1) // If you want Gate inputs with select0 and select1 as integers
+MUX41 mux41 = new MUX41(input0, input1, input2, input3, select0, select1); // Inputs can be integers, gates or clocks
 ```
 #### Encoder42
 To Create a 4-to-2 Encoder run the command:
 ```
-Encoder42 ENC = new Encoder42(in0, in1, in2, in3); // If you want integer inputs
-Encoder42 ENC = new Encoder42(G1, G2, G3, G4); // If you want Gate inputs
+Encoder42 ENC = new Encoder42(G1, in1, G2, in3); // Inputs can be integers, gates or clocks
 ```
 ### Waveforms
 To create a simple gate waveform, use:
@@ -78,12 +75,18 @@ Gate G1 = new AND(0, 1); // Create the gate
 Wave w = new Wave(G1); // Create the wave
 w.showWave(); // Show the wave
 ```
-You can also have the first input to the wave's gate be a clock:
+You can also have the any input to the wave's gate be a clock:
 ```
 Clock clk = new Clock(50); // 50 is the period in picoseconds
 Gate G1 = new AND(clk, 1); // We choose the first input to be a clock and the second to be HIGH for this example
 Wave w = new Wave(G1); // Create the wave
 w.showWave(); // Show the wave
+```
+To change the appearance of the waveform, use:
+```
+w.setWaveColors(Color inputsColor, Color outputColor) // Default is Color.BLUE and Color.GREEN respectively
+w.setDimensions(int halfPeriod, int height) // Default s 50 and 50 respectively
+w.setName(String newName) // Default is "Wave"
 ```
 
 ## Future
