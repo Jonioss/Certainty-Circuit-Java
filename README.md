@@ -80,9 +80,9 @@ w.showWave(); // Show the wave
 ```
 You can also have the first input to the wave's gate be a clock:
 ```
-Gate G1 = new AND(0, 1); // The first input doesn't matter later since it becomes a clock
 Clock clk = new Clock(50); // 50 is the period in picoseconds
-Wave w = new Wave(G1, clk); // Create the wave
+Gate G1 = new AND(clk, 1); // We choose the first input to be a clock and the second to be HIGH for this example
+Wave w = new Wave(G1); // Create the wave
 w.showWave(); // Show the wave
 ```
 
