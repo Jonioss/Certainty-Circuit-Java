@@ -8,7 +8,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.Scanner;
 
@@ -17,6 +16,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -41,24 +41,25 @@ public class GUI extends JFrame{
 	JTextArea console = new JTextArea(20, 40);
 	JMenuBar mb;
 	JMenu fileMenu, editMenu, compileMenu, helpMenu;
-	JMenuItem runItem, saveItem, saveAsItem, loadItem, copyItem, selectAllItem, pasteItem,
-				undoItem;
+	JMenuItem runItem, saveItem, saveAsItem, loadItem, copyItem, selectAllItem, pasteItem;
 	
-	File file;
+	File file = null;
 	
 	// The program's keywords
 	String[] gate_kw = {"Gate", "AND", "OR", "NOT", "NAND", "NOR", "XOR", "XNOR", "MUX21", "MUX41", "Encoder42",
 					"Wave", "Clock"};
-	String[] code_kw = {"int", "boolean", "double", "String", "float", "new", "try", "catch", "print(", "println",
-					"System", "out", "write", "hi", "true", "showWave", "setInputs", "setWaveColors", "setDimensions", "setName", "printTruthTable",
-					"getInputs", "isValidValue"};
+	String[] code_kw = {"new", "try", "catch", "print(", "println", "()",
+					"System", "out", "write", "showWave", "setInputs", "setWaveColors", "setDimensions", "setName", "printTruthTable",
+					"getInputs", "isValidValue", "printStackTrace"};
+	String[] comm = {"//"};
+	String[] type_kw = {"int", "boolean", "double", "String", "float", "true", "false", "Exception", "Main", "public"};
 	
 	private GUIManager guiManager = new GUIManager();
 	private UndoManager undoManager = new UndoManager();
 	
 	public GUI() {
 		
-		this.setTitle("JModelSim");
+		this.setTitle("Certainty Circuit");
 		this.setSize(1200, 800);
 		this.setLocationRelativeTo(null);
 		this.setFocusable(true);
@@ -74,6 +75,11 @@ public class GUI extends JFrame{
 		//this.add(addBtnPanel(), BorderLayout.NORTH);
 		this.add(jsp, BorderLayout.CENTER);
 		this.setVisible(true);
+		
+		txtArea.setText("public Main() {\n\n"
+			+ "\ttry {\n\n\t\t// Implement your circuit here\n\n"
+			+ "\t} catch(Exception e) { e.printStackTrace(); }\n}\n\n"
+			+ "// Use this area to implement new circuits");
 	}
 	
 	private void addBtnPanel() {
@@ -153,18 +159,6 @@ public class GUI extends JFrame{
 			
 		});
 		
-		undoItem = new JMenuItem("Undo");
-		undoItem.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				undoManager.undo();
-				undoManager.undo();
-				undoManager.undo();
-			}
-			
-		});
-		
 		
 		fileMenu.add(saveItem);
 		fileMenu.add(saveAsItem);
@@ -175,7 +169,6 @@ public class GUI extends JFrame{
 		editMenu.add(copyItem);
 		editMenu.add(pasteItem);
 		editMenu.add(selectAllItem);
-		editMenu.add(undoItem);
 		
 		mb.add(fileMenu);
 		mb.add(compileMenu);
@@ -192,6 +185,7 @@ public class GUI extends JFrame{
 		txtArea.setBackground(Color.DARK_GRAY);
 		txtArea.setForeground(Color.WHITE);
 		txtArea.getDocument().addUndoableEditListener(undoManager);
+		txtArea.setCaretColor(Color.WHITE);
 		
 		txtArea.getStyledDocument().addDocumentListener(new DocumentListener() {
 
@@ -267,6 +261,10 @@ public class GUI extends JFrame{
 	
 	private void saveFile(File file) {
 		// Open the file.
+		if(file == null) {
+			saveFileAs();
+			return;
+		}
         PrintWriter out;
 		try {
 			out = new PrintWriter(file);
@@ -275,8 +273,8 @@ public class GUI extends JFrame{
 
 	        // Close the file.
 	        out.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(this, e.getStackTrace());
 		}
 	}
 	
@@ -299,10 +297,17 @@ public class GUI extends JFrame{
 		
 		for(int i = 0; i < kw.length; i++) {
 			int pos = s.indexOf(kw[i]);
+			
 			if(pos == -1 || guiManager.countAppearancesOf(s.substring(0, pos), '\"') % 2 != 0)
 				continue;
 			else {
-				doc.setCharacterAttributes(numOfChars + pos, kw[i].length(), attrs, false);
+				if(kw[0].compareTo("//") == 0) {
+					doc.setCharacterAttributes(numOfChars + pos, s.length() - pos, attrs, false);
+				}
+				else {
+					doc.setCharacterAttributes(numOfChars + pos, kw[i].length(), attrs, false);
+				}
+				
 			}
 		}
 		if(System.getProperty("os.name").toLowerCase().startsWith("windows")) {
@@ -319,15 +324,17 @@ public class GUI extends JFrame{
             @Override
             public void run() {
             	String[] temp = txtArea.getText().split("\n");
-				int numOfChars1 = 0, numOfChars2 = 0;
+				int numOfCharsCodeKW = 0, numOfCharsGateKW = 0, numOfCharsComment = 0, numOfCharsType = 0;
 				
 				SimpleAttributeSet normalAttrs = new SimpleAttributeSet();
 				StyleConstants.setForeground(normalAttrs, Color.white);
 				txtArea.getStyledDocument().setCharacterAttributes(0, txtArea.getText().length(), normalAttrs, false);
 				
 				for(int i = 0; i < temp.length; i++) {
-					numOfChars2 = colorText(txtArea.getStyledDocument(), temp[i], numOfChars2, gate_kw, Color.CYAN);
-					numOfChars1 = colorText(txtArea.getStyledDocument(), temp[i], numOfChars1, code_kw, Color.ORANGE);
+					numOfCharsType = colorText(txtArea.getStyledDocument(), temp[i], numOfCharsType, type_kw, Color.YELLOW);
+					numOfCharsGateKW = colorText(txtArea.getStyledDocument(), temp[i], numOfCharsGateKW, gate_kw, Color.CYAN);
+					numOfCharsCodeKW = colorText(txtArea.getStyledDocument(), temp[i], numOfCharsCodeKW, code_kw, Color.ORANGE);
+					numOfCharsComment = colorText(txtArea.getStyledDocument(), temp[i], numOfCharsComment, comm, Color.GREEN);
 				}
             }
         };

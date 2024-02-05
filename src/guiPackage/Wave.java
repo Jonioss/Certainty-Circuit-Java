@@ -22,7 +22,6 @@ public class Wave extends JFrame{
 		this.add(wp);
 		
 		this.setTitle("Wave");
-		//this.setUndecorated(true);
 		this.setSize(width, height);
 		this.setLocationRelativeTo(null);
 		this.setFocusable(true);

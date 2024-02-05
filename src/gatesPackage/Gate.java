@@ -6,6 +6,7 @@ public class Gate {
 	// 2 inputs of the Gate and the output, 1 bit each
 	protected Object[] inputs;
 	protected int output = 0;
+	protected int setOutput = -1;
 	Gate clk;
 	protected int currentTime = 0; // For when the inputs are clocks
 	
@@ -17,7 +18,7 @@ public class Gate {
 		inputs = obj;
 	}
 	
-	public void setInputs(Object[] new_in) throws invalidValueException {
+	public void setInputs(Object... new_in) throws invalidValueException {
 		for(Object i: new_in) {
 			if(i instanceof Integer) {
 				if(!isValidValue((int) i)) {
@@ -33,9 +34,20 @@ public class Gate {
 		currentTime = newTime;
 	}
 	
+	public void setNewOutput(int newSetOutput) {
+		if(isValidValue(newSetOutput)) {
+			setOutput = newSetOutput;
+		}
+	}
+	
 	// Returns the output of the Gate
 	public int getOutput() throws invalidValueException {
-		return output;
+		if(setOutput == -1) {
+			return output;
+		}
+		else {
+			return setOutput;
+		}
 	}
 	
 	// Returns the inputs as integer matrix

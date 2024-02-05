@@ -24,11 +24,9 @@ public class GUIManager {
 			+ "import mainPackage.*;\n"
 			+ "\n"
 			+ "@SuppressWarnings(\"unused\")\n"
-			+ "public class Test {\n"
-			+ "public Test() {\n"
-			+ "try {\n", 
-	s2 = "\n} catch(Exception e) {\n}\n}\n"
-			+ "private void write(Object obj) { System.out.println(obj); }\n}\n";
+			+ "public class Main {\n"
+			+ "private void write(Object obj) { System.out.println(obj); }",
+	s2 = "\n}\n";
 	
 	public int countAppearancesOf(String s, char c) {
 		int num = 0;
@@ -45,7 +43,7 @@ public class GUIManager {
 		String source = s1 + txtAreaText + s2;
 		try {
 			File root = Files.createTempDirectory("java").toFile();
-			File sourceFile = new File(root, "test/Test.java");
+			File sourceFile = new File(root, "test/Main.java");
 			sourceFile.getParentFile().mkdirs();
 			Files.write(sourceFile.toPath(), source.getBytes(StandardCharsets.UTF_8));
 
@@ -56,7 +54,7 @@ public class GUIManager {
 			// Load and instantiate compiled class.
 			System.out.println("----------Compilation Successful!----------");
 			URLClassLoader classLoader = URLClassLoader.newInstance(new URL[] { root.toURI().toURL() });
-			Class<?> cls = Class.forName("test.Test", true, classLoader);
+			Class<?> cls = Class.forName("test.Main", true, classLoader);
 			@SuppressWarnings("unused")
 			Object instance = cls.getDeclaredConstructor().newInstance();
 		} catch (Exception e) {
