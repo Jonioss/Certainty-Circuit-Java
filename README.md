@@ -15,9 +15,25 @@ Circuit Simulation Software and IDE currently in development
 ## Usage
 ### User Interface
 The UI consists of:
-- The Button panel, with appropriate buttons to save, load and run circuit design,
+- The Menu panel, with appropriate buttons to save, load and run circuit design,
 - The Code panel, where the user writes the code to simulate a circuit,
 - The Console panel.
+
+### Pre-made code
+When the user runs the application, the code panel will already have a few lines of code to point the user towards the right direction.
+```
+public Main() {
+
+	try {
+
+		// Implement your circuit here
+
+	} catch(Exception e) { e.printStackTrace(); }
+}
+
+// Use this area to implement custom circuits
+```
+The pre-generated lines of code should not be altered. Instead, the user should follow the instructions in the comments.
 
 ### Logic Gate Usage
 To create a logic gate, type the code:
