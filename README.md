@@ -105,6 +105,32 @@ w.setDimensions(int halfPeriod, int height) // Default s 50 and 50 respectively
 w.setName(String newName) // Default is "Wave"
 ```
 before using w.showWave().
+### Custom Circuit Implementation
+
+In order to implement a custom circuit, the user should do so outside of the Main public method.
+Example code for implementing a custom circuit is shown below:
+```
+Gate circuit(int in1, int in2) throws Exception{
+	
+	Gate customCircuit = new Gate(); // Create the custom integrated circuit as one gate 
+
+	// Implement the usage of this circuit
+	Gate g1 = new AND(0, in1);
+	Gate g2 = new OR(1, in2);
+	Gate g3 = new XOR(g1, g2);
+
+
+	customCircuit.setInputs(in1, in2); // Set the inputs
+	customCircuit.setNewOutput(g3.getOutput()); // Set the output
+	return customCircuit; // Return the custom integrated circuit
+}
+```
+Afterwards, inside the Main method, the user can use the following code to test the usage of
+the custom circuit:
+```
+Wave w = new Wave(circuit(1, 0));
+w.showWave();
+```
 
 ## Future
 - Future updates with sequential circuits coming soon
