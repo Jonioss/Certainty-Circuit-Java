@@ -108,7 +108,7 @@ before using w.showWave().
 ### Custom Circuit Implementation
 
 In order to implement a custom circuit, the user should do so outside of the Main public method.
-Example code for implementing a custom circuit is shown below:
+Example code for implementing a custom circuit with integer inputs is shown below:
 ```
 Gate circuit(int in1, int in2) throws Exception{
 	
@@ -130,6 +130,28 @@ the custom circuit:
 ```
 Wave w = new Wave(circuit(1, 0));
 w.showWave();
+```
+
+Another example using clocks would be:
+```
+void circuit(Clock in1, Clock in2) throws Exception{
+
+	// Implement the usage of this circuit
+	Gate G1 = new AND(in1, in2);
+	Gate G2 = new XOR(1, in2);
+	Gate G3 = new OR(G1, G2);
+
+	Wave w = new Wave(G3);
+	w.setInputs(in1, in2);
+	w.showWave();
+}
+```
+Afterwards, inside the Main method, the user can use the following code to test the usage of
+the custom circuit:
+```
+Clock clk1 = new Clock(50);
+Clock clk2 = new Clock(100);
+circuit(clk1, clk2);
 ```
 
 ## Future
