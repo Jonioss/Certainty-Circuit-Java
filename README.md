@@ -157,7 +157,3 @@ circuit(clk1, clk2);
 ## Future
 - Future updates with sequential circuits coming soon
 - More integrated circuits coming soon
-- Expansion upon waveforms:
-    1) Ability to test an entire circuit rather than just one gate
-
-
