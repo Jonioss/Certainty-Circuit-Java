@@ -99,7 +99,7 @@ To use the Karnaugh method and print out the result, one may use:
 ```
 write(tt.simplify()); // tt.simplify() returns the circuit in String format
 ```
-The above prints out the result of the Karnaugh method. Variable a is always the LSB (first digit of inputs) and the last of the variables in alphabetical order is the MSB (last digit of inputs).
+The above prints out the result of the Karnaugh method. Variable a is always the MSB (last digit of inputs) and the last of the variables in alphabetical order is the LSB (first digit of inputs).
 ### Waveforms
 To create a simple gate waveform, use:
 ```
