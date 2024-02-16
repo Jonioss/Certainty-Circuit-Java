@@ -84,6 +84,22 @@ To Create a 4-to-2 Encoder run the command:
 ```
 Encoder42 ENC = new Encoder42(G1, in1, G2, in3); // Inputs can be integers, gates or clocks
 ```
+### Truth Tables
+Truth Tables are used for instant simplification of a circuit using the Karnaugh method.
+To create a simple TruthTable object, use:
+```
+TruthTable tt = new TruthTable(int, int, int, ...);
+```
+The arguments in the TruthTable's constructor are all integers, and represent the outputs of the unknown circuit for inputs 0, 1, 2, 3 etc. Obviously, they can only have value of 0 or 1.
+To print the TruthTable in table format, simply print it as such:
+```
+write(tt); OR System.out.println(tt);
+```
+To use the Karnaugh method and print out the result, one may use:
+```
+write(tt.simplify()); // tt.simplify() returns the circuit in String format
+```
+The above prints out the result of the Karnaugh method. Variable a is always the LSB (first digit of inputs) and the last of the variables in alphabetical order is the MSB (last digit of inputs).
 ### Waveforms
 To create a simple gate waveform, use:
 ```
@@ -156,4 +172,4 @@ circuit(clk1, clk2);
 
 ## Future
 - Future updates with sequential circuits coming soon
-- More integrated circuits coming soon
+- Updates to TruthTable and unknown circuit simplification coming soon
