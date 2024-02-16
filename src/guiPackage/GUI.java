@@ -6,56 +6,39 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.LinkedList;
 
-import java.io.File;
-import java.io.PrintWriter;
-import java.util.Scanner;
-
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
-import javax.swing.undo.UndoManager;
+import javax.swing.text.BadLocationException;
 
 public class GUI extends JFrame{
 
 	private static final long serialVersionUID = 1689787319309273196L;
 	
-	int txtNumOfLines = 1;
+	LinkedList<String> prevStrings = new LinkedList<String>();
 	
 	JTextPane txtArea = new JTextPane();
-	JTextArea console = new JTextArea(20, 40);
+	JTextPane console = new JTextPane();
 	JMenuBar mb;
 	JMenu fileMenu, editMenu, compileMenu, helpMenu;
-	JMenuItem runItem, saveItem, saveAsItem, loadItem, copyItem, selectAllItem, pasteItem;
-	
-	File file = null;
-	
-	// The program's keywords
-	String[] gate_kw = {"Gate", "AND", "OR", "NOT", "NAND", "NOR", "XOR", "XNOR", "MUX21", "MUX41", "Encoder42",
-					"Wave", "Clock"};
-	String[] code_kw = {"new", "try", "catch", "print(", "println", "()",
-					"System", "out", "write", "showWave", "setInputs", "setWaveColors", "setDimensions", "setName", "printTruthTable",
-					"getInputs", "isValidValue", "printStackTrace"};
-	String[] comm = {"//"};
-	String[] type_kw = {"int", "boolean", "double", "String", "float", "true", "false", "Exception", "Main", "public"};
+	JMenuItem runItem, saveItem, saveAsItem, loadItem, copyItem, selectAllItem, pasteItem, 
+				undoItem;
 	
 	private GUIManager guiManager = new GUIManager();
-	private UndoManager undoManager = new UndoManager();
+	private GUISaveLoadManager SLManager = new GUISaveLoadManager();
+	private GUI gui = this;
 	
 	public GUI() {
 		
@@ -80,6 +63,10 @@ public class GUI extends JFrame{
 			+ "\ttry {\n\n\t\t// Implement your circuit here\n\n"
 			+ "\t} catch(Exception e) { e.printStackTrace(); }\n}\n\n"
 			+ "// Use this area to implement new circuits");
+		
+		prevStrings.add(txtArea.getText());
+		
+		jsp.setDividerLocation(.6);
 	}
 	
 	private void addBtnPanel() {
@@ -106,7 +93,7 @@ public class GUI extends JFrame{
 		saveItem.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				saveFile(file);
+				SLManager.saveFile(txtArea, gui);
 				
 			}
 		});
@@ -116,7 +103,7 @@ public class GUI extends JFrame{
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				saveFileAs();
+				SLManager.saveFileAs(txtArea, gui);
 			}
 		});
 		
@@ -124,7 +111,7 @@ public class GUI extends JFrame{
 		loadItem.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				openFile();
+				SLManager.openFile(guiManager, txtArea, gui);
 				
 			}
 		});
@@ -159,6 +146,16 @@ public class GUI extends JFrame{
 			
 		});
 		
+		undoItem = new JMenuItem("Undo");
+		undoItem.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				undo();
+			}
+			
+		});
+		
 		
 		fileMenu.add(saveItem);
 		fileMenu.add(saveAsItem);
@@ -173,6 +170,7 @@ public class GUI extends JFrame{
 		mb.add(fileMenu);
 		mb.add(compileMenu);
 		mb.add(editMenu);
+		mb.add(undoItem);
 		
 		this.add(mb);
 		this.setJMenuBar(mb);
@@ -181,10 +179,9 @@ public class GUI extends JFrame{
 	private JScrollPane addTxtPanel() {
 		
 		JPanel txtPanel = new JPanel();
-		txtArea.setPreferredSize(new Dimension(getWidth()-10, 200));
+		txtArea.setPreferredSize(new Dimension(100, 200));
 		txtArea.setBackground(Color.DARK_GRAY);
 		txtArea.setForeground(Color.WHITE);
-		txtArea.getDocument().addUndoableEditListener(undoManager);
 		txtArea.setCaretColor(Color.WHITE);
 		
 		txtArea.getStyledDocument().addDocumentListener(new DocumentListener() {
@@ -192,22 +189,54 @@ public class GUI extends JFrame{
 			@Override
 			public void insertUpdate(DocumentEvent e) {
 				// TODO Auto-generated method stub
-				changeColorThread();
+				undoItem.setEnabled(true);
+				try {
+					String c = e.getDocument().getText(e.getOffset(), e.getLength());
+					if(c.compareTo(" ") == 0 || c.compareTo("\n") == 0) {
+						prevStrings.add(txtArea.getText());
+					}
+				} catch (BadLocationException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				guiManager.changeColorThread(txtArea);
 			}
 
 			@Override
 			public void removeUpdate(DocumentEvent e) {
-				// TODO Auto-generated method stub
-				changeColorThread();
+				
 			}
 
 			@Override
 			public void changedUpdate(DocumentEvent e) {
 				// TODO Auto-generated method stub
-				
 			}
 			
 			
+		});
+		
+		txtArea.addKeyListener(new KeyListener(){
+		    @Override
+		    public void keyPressed(KeyEvent e){
+		        if(e.getKeyCode() == KeyEvent.VK_Z && e.isControlDown()){
+		        	undo();
+		        }
+		        else if(e.getKeyCode() == KeyEvent.VK_R && e.isControlDown()) {
+		        	console.setText("");
+					guiManager.run(txtArea.getText(), console);
+		        }
+		        else if(e.getKeyCode() == KeyEvent.VK_S && e.isControlDown()) {
+		        	SLManager.saveFileAs(txtArea, gui);
+		        }
+		    }
+
+		    @Override
+		    public void keyTyped(KeyEvent e) {
+		    }
+
+		    @Override
+		    public void keyReleased(KeyEvent e) {
+		    }
 		});
 		
 		txtPanel.add(txtArea);
@@ -221,7 +250,7 @@ public class GUI extends JFrame{
 	private JScrollPane addConsole() {
 		JPanel consolePanel = new JPanel();
 		console.setEditable(false);
-		console.setPreferredSize(new Dimension(getWidth(), 50));
+		console.setPreferredSize(new Dimension(100, 200));
 		console.setBackground(Color.black);
 		console.setForeground(Color.white);
 		consolePanel.add(console);
@@ -230,115 +259,16 @@ public class GUI extends JFrame{
 		return scroll;
 	}
 	
-	private void openFile(){
-		JFileChooser fileChooser = new JFileChooser();
-		//FileNameExtensionFilter filter = new FileNameExtensionFilter("txt", "TXT", "txt");
-		//fileChooser.setFileFilter(filter);
-		if (fileChooser.showOpenDialog(this.getComponent(0)) == JFileChooser.APPROVE_OPTION) {
-			file = fileChooser.getSelectedFile();
-			System.out.println("File Open Successful");
-			
-			Scanner in;
-			try {
-				in = new Scanner(file);
-				txtArea.setText("");
-				String s;
-				
-				while(in.hasNextLine()) {
-					//txtArea.append(in.nextLine() + "\n");
-					StyledDocument doc = txtArea.getStyledDocument();
-					s = in.nextLine();
-					doc.insertString(doc.getLength(), s + "\n", null);
-					changeColorThread();
-				}
-			} catch (Exception e) {
-				System.out.println("File Reading Ended");
-			}
-		} else {
-			System.out.println("File Open Failed");
+	private void undo() {
+		if(prevStrings.size() > 1) {
+			prevStrings.removeLast();
 		}
-	}
-	
-	private void saveFile(File file) {
-		// Open the file.
-		if(file == null) {
-			saveFileAs();
-			return;
-		}
-        PrintWriter out;
-		try {
-			out = new PrintWriter(file);
-			
-			out.println(txtArea.getText());
-
-	        // Close the file.
-	        out.close();
-		} catch (Exception e) {
-			JOptionPane.showMessageDialog(this, e.getStackTrace());
-		}
-	}
-	
-	private void saveFileAs() {
-		JFileChooser fileChooser = new JFileChooser();
-		if (fileChooser.showSaveDialog(this.getComponent(0)) == JFileChooser.APPROVE_OPTION) {
-			file = fileChooser.getSelectedFile();
-			System.out.println("File Save Successful");
-			saveFile(file);
-			
-		} else {
-			System.out.println("File Save Failed");
-		}
-	}
-	
-	private int colorText(StyledDocument doc, String s, int numOfChars, String[] kw, Color c) {
+		txtArea.setText(prevStrings.getLast());
 		
-		SimpleAttributeSet attrs = new SimpleAttributeSet();
-		StyleConstants.setForeground(attrs, c);
-		
-		for(int i = 0; i < kw.length; i++) {
-			int pos = s.indexOf(kw[i]);
-			
-			if(pos == -1 || guiManager.countAppearancesOf(s.substring(0, pos), '\"') % 2 != 0)
-				continue;
-			else {
-				if(kw[0].compareTo("//") == 0) {
-					doc.setCharacterAttributes(numOfChars + pos, s.length() - pos, attrs, false);
-				}
-				else {
-					doc.setCharacterAttributes(numOfChars + pos, kw[i].length(), attrs, false);
-				}
-				
-			}
+		if(prevStrings.size() <= 1) {
+			undoItem.setEnabled(false);
 		}
-		if(System.getProperty("os.name").toLowerCase().startsWith("windows")) {
-			numOfChars += s.length();
-		}
-		else {
-			numOfChars += s.length() + 1;
-		}
-		return numOfChars;
 	}
 	
-	private void changeColorThread() {
-        Runnable cct = new Runnable() {
-            @Override
-            public void run() {
-            	String[] temp = txtArea.getText().split("\n");
-				int numOfCharsCodeKW = 0, numOfCharsGateKW = 0, numOfCharsComment = 0, numOfCharsType = 0;
-				
-				SimpleAttributeSet normalAttrs = new SimpleAttributeSet();
-				StyleConstants.setForeground(normalAttrs, Color.white);
-				txtArea.getStyledDocument().setCharacterAttributes(0, txtArea.getText().length(), normalAttrs, false);
-				
-				for(int i = 0; i < temp.length; i++) {
-					numOfCharsType = colorText(txtArea.getStyledDocument(), temp[i], numOfCharsType, type_kw, Color.YELLOW);
-					numOfCharsGateKW = colorText(txtArea.getStyledDocument(), temp[i], numOfCharsGateKW, gate_kw, Color.CYAN);
-					numOfCharsCodeKW = colorText(txtArea.getStyledDocument(), temp[i], numOfCharsCodeKW, code_kw, Color.ORANGE);
-					numOfCharsComment = colorText(txtArea.getStyledDocument(), temp[i], numOfCharsComment, comm, Color.GREEN);
-				}
-            }
-        };
-        SwingUtilities.invokeLater(cct);
-    }
 	
 }

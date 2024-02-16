@@ -12,12 +12,13 @@ public class Wave extends JFrame{
 	WavePanel wp = new WavePanel();
 	
 	public Wave(Gate G) {
-		this(800, 500, G);
+		this(1000, 500, G);
 	}
 	public Wave(int width, int height, Gate G) {
 		
 		wp.setGate(G);
 		wp.setInputs(G.getInputs());
+		wp.setGrid(wp.pady * 2 / G.getInputs().length, wp.period * 2 / G.getInputs().length);
 		
 		this.add(wp);
 		
@@ -40,6 +41,9 @@ public class Wave extends JFrame{
 	}
 	public void showWave() {
 		this.setVisible(true);
+	}
+	public void setInputs(Object...objects) {
+		wp.setInputs(objects);
 	}
 	
 }

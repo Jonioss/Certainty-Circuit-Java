@@ -58,9 +58,13 @@ public class Gate {
 	// Prints the truth table of the Gate for two inputs
 	public void printTruthTable() throws invalidValueException {
 		System.out.println("A\tB\tOutput");
+		this.setInputs(0, 0);
 		System.out.println(0 + "\t" + 0 + "\t" + getOutput());
+		this.setInputs(0, 1);
 		System.out.println(0 + "\t" + 1 + "\t" + getOutput());
+		this.setInputs(1, 0);
 		System.out.println(1 + "\t" + 0 + "\t" + getOutput());
+		this.setInputs(1, 1);
 		System.out.println(1 + "\t" + 1 + "\t" + getOutput());
 	}
 	
