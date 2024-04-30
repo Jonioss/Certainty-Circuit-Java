@@ -20,13 +20,11 @@ import javax.tools.ToolProvider;
 public class GUIManager {
 	
 	// The program's keywords
-		String[] gate_kw = {"Gate", "AND", "OR", "NOT", "NAND", "NOR", "XOR", "XNOR", "MUX21", "MUX41", "Encoder42",
-						"Wave", "Clock", "TruthTable"};
-		String[] code_kw = {"new", "try", "catch", "print(", "println", "()",
-						"System", "out", "write", "showWave", "setInputs", "setWaveColors", "setDimensions", "setName", "printTruthTable",
-						"getInputs", "isValidValue", "printStackTrace", "for", "while", "simplify"};
-		String[] comm = {"//"};
-		String[] type_kw = {"int", "boolean", "double", "String", "float", "true", "false", "Exception", "Main", "public"};
+	String[] gate_kw = {"Gate", "AND", "OR", "NOT", "NAND", "NOR", "XOR", "XNOR", "MUX21", "MUX41", "Encoder42",
+					"Wave", "Clock", "TruthTable"};
+	String[] comm = {"//"};
+	String[] type_kw = {"int ", "boolean ", "double ", "String ", "float ", "true", "false", "Exception ", "public ",
+			"private", "final"};
 	
 	String s1 = "package test;\n"
 			+ "import exceptionsPackage.*;\n"
@@ -41,6 +39,35 @@ public class GUIManager {
 			+ "public class Main {\n"
 			+ "private void write(Object obj) { System.out.println(obj); }",
 	s2 = "\n}\n";
+	
+	int colorSetChoice = 0;
+	Color[][] ColorSet = {
+			{ // Dark Color Set
+					new Color(252, 144, 3),
+					new Color(15, 212, 202),
+					new Color(27, 194, 52)
+			},
+			{ // Light Color Set
+					new Color(235, 5, 247),
+					new Color(5, 247, 207),
+					Color.GREEN
+			},
+			{ // Pink Color Set
+					new Color(174, 5, 247),
+					new Color(247, 5, 223),
+					new Color(247, 5, 114)
+			},
+			{ // Fire Color Set
+					new Color(255, 0, 0),
+					new Color(250, 121, 0),
+					new Color(250, 212, 0)
+			},
+			{ // Beach Color Set
+					new Color(0, 192, 250),
+					new Color(194, 178, 128),
+					new Color(0, 80, 240)
+			}
+	};
 	
 	public int countAppearancesOf(String s, char c) {
 		int num = 0;
@@ -75,6 +102,7 @@ public class GUIManager {
 			Object instance = cls.getDeclaredConstructor().newInstance();
 		} catch (Exception e) {
 			System.out.println("------------Compilation Failed!------------");
+			System.out.println(e.toString());
 		}
 		
 	}
@@ -99,41 +127,53 @@ public class GUIManager {
 		SimpleAttributeSet attrs = new SimpleAttributeSet();
 		StyleConstants.setForeground(attrs, c);
 		
+		String new_s = s;
+		
 		for(int i = 0; i < kw.length; i++) {
-			int pos = s.indexOf(kw[i]);
+			int pos = new_s.indexOf(kw[i]);
 			
-			if(pos == -1 || countAppearancesOf(s.substring(0, pos), '\"') % 2 != 0)
+			if(pos == -1 || countAppearancesOf(new_s.substring(0, pos), '\"') % 2 != 0)
 				continue;
 			else {
 				if(kw[0].compareTo("//") == 0) {
-					doc.setCharacterAttributes(numOfChars + pos, s.length() - pos, attrs, false);
+					doc.setCharacterAttributes(numOfChars + pos, new_s.length() - pos, attrs, false);
+					continue;
 				}
 				else {
 					doc.setCharacterAttributes(numOfChars + pos, kw[i].length(), attrs, false);
+					String temp = "";
+					for(int j = 0; j < kw[i].length(); j++) {
+						temp += "_";
+					}
+					new_s = new_s.replaceFirst(kw[i], temp);
 				}
-				
 			}
+			
+			if(new_s.indexOf(kw[i]) != -1) {
+				colorText(doc, new_s, numOfChars, kw, c);
+			}
+			
+			new_s = s;
 		}
 		numOfChars += s.length() + 1;
 		return numOfChars;
 	}
 	
-	public void changeColorThread(JTextPane txtArea) {
+	public void changeColorThread(JTextPane txtArea, Color normalTextColor) {
         Runnable cct = new Runnable() {
             @Override
             public void run() {
             	String[] temp = txtArea.getText().split("\n");
-				int numOfCharsCodeKW = 0, numOfCharsGateKW = 0, numOfCharsComment = 0, numOfCharsType = 0;
+				int numOfCharsGateKW = 0, numOfCharsComment = 0, numOfCharsType = 0;
 				
 				SimpleAttributeSet normalAttrs = new SimpleAttributeSet();
-				StyleConstants.setForeground(normalAttrs, Color.white);
+				StyleConstants.setForeground(normalAttrs, normalTextColor);
 				txtArea.getStyledDocument().setCharacterAttributes(0, txtArea.getText().length(), normalAttrs, false);
 				
 				for(int i = 0; i < temp.length; i++) {
-					numOfCharsType = colorText(txtArea.getStyledDocument(), temp[i], numOfCharsType, type_kw, Color.YELLOW);
-					numOfCharsGateKW = colorText(txtArea.getStyledDocument(), temp[i], numOfCharsGateKW, gate_kw, Color.CYAN);
-					numOfCharsCodeKW = colorText(txtArea.getStyledDocument(), temp[i], numOfCharsCodeKW, code_kw, Color.ORANGE);
-					numOfCharsComment = colorText(txtArea.getStyledDocument(), temp[i], numOfCharsComment, comm, Color.GREEN);
+					numOfCharsType = colorText(txtArea.getStyledDocument(), temp[i], numOfCharsType, type_kw, ColorSet[colorSetChoice][0]); // Orange
+					numOfCharsGateKW = colorText(txtArea.getStyledDocument(), temp[i], numOfCharsGateKW, gate_kw, ColorSet[colorSetChoice][1]); // Blue
+					numOfCharsComment = colorText(txtArea.getStyledDocument(), temp[i], numOfCharsComment, comm, ColorSet[colorSetChoice][2]); // Green
 				}
             }
         };

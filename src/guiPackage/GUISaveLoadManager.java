@@ -13,7 +13,7 @@ public class GUISaveLoadManager {
 	
 	File file = null;
 	
-	public void openFile(GUIManager guiManager, JTextPane txtArea, GUI gui){
+	public void openFile(GUIManager guiManager, JTextPane txtArea, MainGUI gui){
 		JFileChooser fileChooser = new JFileChooser();
 		//FileNameExtensionFilter filter = new FileNameExtensionFilter("txt", "TXT", "txt");
 		//fileChooser.setFileFilter(filter);
@@ -32,7 +32,8 @@ public class GUISaveLoadManager {
 					StyledDocument doc = txtArea.getStyledDocument();
 					s = in.nextLine();
 					doc.insertString(doc.getLength(), s + "\n", null);
-					guiManager.changeColorThread(txtArea);
+					guiManager.changeColorThread(txtArea, txtArea.getForeground());
+					guiManager.changeColorThread(txtArea, txtArea.getForeground());
 				}
 			} catch (Exception e) {
 				System.out.println("File Reading Ended");
@@ -42,7 +43,7 @@ public class GUISaveLoadManager {
 		}
 	}
 	
-	public void saveFile(JTextPane txtArea, GUI gui) {
+	public void saveFile(JTextPane txtArea, MainGUI gui) {
 		// Open the file.
 		if(file == null) {
 			saveFileAs(txtArea, gui);
@@ -61,7 +62,7 @@ public class GUISaveLoadManager {
 		}
 	}
 	
-	public void saveFileAs(JTextPane txtArea, GUI gui) {
+	public void saveFileAs(JTextPane txtArea, MainGUI gui) {
 		JFileChooser fileChooser = new JFileChooser();
 		if (fileChooser.showSaveDialog(gui.getComponent(0)) == JFileChooser.APPROVE_OPTION) {
 			file = fileChooser.getSelectedFile();
